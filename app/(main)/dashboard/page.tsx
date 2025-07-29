@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { isToday } from "date-fns";
 import { DollarSign, ShoppingBag, Users } from "lucide-react";
 
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import apiClient from "@/lib/axios";
 import { BanResponse, DonHangResponse } from "@/types/api";
 import { StatCard } from "@/components/dashboard/stat-card";
