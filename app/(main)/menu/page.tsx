@@ -1,7 +1,7 @@
 // file: app/(main)/menu/page.tsx
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 import apiClient from "@/lib/axios";
 import { ThucDonResponse } from "@/types/api";
 import { MenuClient } from "./menu-client";
