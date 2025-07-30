@@ -3,7 +3,8 @@ import {
     LayoutDashboard,
     Coffee,
     Users,
-    Warehouse,
+    Warehouse, // Giữ lại icon này cho Kho
+    BookOpenCheck, // Icon mới cho Thực đơn
     Truck,
     TicketPercent,
     BookUser,
@@ -25,6 +26,11 @@ export const navLinks = [
     {
         href: "/menu",
         label: "Quản lý Thực đơn",
+        icon: BookOpenCheck,
+    },
+    {
+        href: "/inventory",
+        label: "Quản lý Kho",
         icon: Warehouse,
     },
     {

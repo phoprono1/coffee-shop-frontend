@@ -1,4 +1,4 @@
-// file: app/(main)/menu/menu-client.tsx (Bộ não điều khiển)
+// file: app/(main)/inventory/inventory-client.tsx (Phiên bản đã sửa)
 "use client";
 
 import { useState } from "react";
@@ -10,48 +10,41 @@ import { useSession } from "next-auth/react";
 
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { ThucDonResponse } from "@/types/api";
+import { NguyenVatLieuResponse } from "@/types/api";
 import { getColumns } from "./columns";
-import { MenuForm } from "./menu-form"; // Import form đã đổi tên
+import { InventoryForm } from "./inventory-form"; // Import form đúng
 import { AlertModal } from "@/components/modals/alert-modal";
 import apiClient from "@/lib/axios";
-import { RecipeForm } from "./recipe-form";
 
-interface MenuClientProps {
-  data: ThucDonResponse[];
+interface InventoryClientProps {
+  data: NguyenVatLieuResponse[];
 }
 
-export const MenuClient = ({ data }: MenuClientProps) => {
+export const InventoryClient = ({ data }: InventoryClientProps) => {
   const router = useRouter();
   const { data: session } = useSession();
 
-  // State cho form Sửa/Thêm
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingData, setEditingData] = useState<ThucDonResponse | null>(null);
-
-  // State cho Alert Xóa
+  const [editingData, setEditingData] = useState<NguyenVatLieuResponse | null>(
+    null
+  );
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const [isRecipeModalOpen, setIsRecipeModalOpen] = useState(false);
-  const [selectedMenuItem, setSelectedMenuItem] =
-    useState<ThucDonResponse | null>(null);
-
   const deleteMutation = useMutation<void, Error, number>({
     mutationFn: async (id) => {
-      await apiClient.delete(`/thuc-don/${id}`, {
+      // Cập nhật endpoint
+      await apiClient.delete(`/nguyen-vat-lieu/${id}`, {
         headers: { Authorization: `Bearer ${session?.accessToken}` },
       });
     },
     onSuccess: () => {
-      toast.success("Xóa món ăn thành công!");
+      toast.success("Xóa nguyên vật liệu thành công!");
       router.refresh();
       setIsAlertOpen(false);
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      // Thêm kiểu 'any' để truy cập response
-      // Cố gắng lấy thông báo lỗi từ response của server
       const errorMessage =
         error.response?.data?.message || "Đã có lỗi xảy ra khi xóa.";
       toast.error(errorMessage);
@@ -64,25 +57,21 @@ export const MenuClient = ({ data }: MenuClientProps) => {
     }
   };
 
-  // Khởi tạo các cột với các hàm callback
+  // Cập nhật getColumns, xóa bỏ onManageRecipe
   const columns = getColumns({
-    onEdit: (menuItem) => {
-      setEditingData(menuItem);
+    onEdit: (material) => {
+      setEditingData(material);
       setIsFormOpen(true);
     },
-    onDelete: (menuItem) => {
-      setDeletingId(menuItem.id);
+    onDelete: (material) => {
+      setDeletingId(material.id);
       setIsAlertOpen(true);
-    },
-    onManageRecipe: (menuItem) => {
-      setSelectedMenuItem(menuItem);
-      setIsRecipeModalOpen(true);
     },
   });
 
   return (
     <>
-      <MenuForm
+      <InventoryForm
         isOpen={isFormOpen}
         onClose={() => {
           setIsFormOpen(false);
@@ -97,16 +86,10 @@ export const MenuClient = ({ data }: MenuClientProps) => {
         loading={deleteMutation.isPending}
       />
 
-      <RecipeForm
-        isOpen={isRecipeModalOpen}
-        onClose={() => setIsRecipeModalOpen(false)}
-        menuItem={selectedMenuItem}
-      />
-
       <div className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-bold tracking-tight">
-            Quản lý Thực đơn ({data.length})
+            Quản lý Kho ({data.length})
           </h1>
           <Button
             onClick={() => {

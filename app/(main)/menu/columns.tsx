@@ -11,18 +11,30 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
-const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("vi-VN", {
-      style: "currency",
-      currency: "VND",
-    }).format(amount);
-  };
+// Props mới cho hàm getColumns
+interface MenuColumnsProps {
+  onEdit: (menuItem: ThucDonResponse) => void;
+  onDelete: (menuItem: ThucDonResponse) => void;
+  onManageRecipe: (menuItem: ThucDonResponse) => void;
+}
 
-export const columns: ColumnDef<ThucDonResponse>[] = [
+const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(amount);
+};
+
+export const getColumns = ({
+  onEdit,
+  onDelete,
+  onManageRecipe,
+}: MenuColumnsProps): ColumnDef<ThucDonResponse>[] => [
   {
     accessorKey: "tenMon",
     header: "Tên món",
@@ -36,18 +48,22 @@ export const columns: ColumnDef<ThucDonResponse>[] = [
     header: () => <div className="text-right">Giá</div>,
     cell: ({ row }) => {
       const gia = parseFloat(row.getValue("gia"));
-      return <div className="text-right font-medium">{formatCurrency(gia)}</div>;
+      return (
+        <div className="text-right font-medium">{formatCurrency(gia)}</div>
+      );
     },
   },
   {
     accessorKey: "khaDung",
     header: "Trạng thái",
     cell: ({ row }) => {
-        const khaDung: boolean = row.getValue("khaDung");
-        return khaDung 
-            ? <Badge variant="default">Khả dụng</Badge> 
-            : <Badge variant="destructive">Hết hàng</Badge>;
-    }
+      const khaDung: boolean = row.getValue("khaDung");
+      return khaDung ? (
+        <Badge variant="default">Khả dụng</Badge>
+      ) : (
+        <Badge variant="destructive">Hết hàng</Badge>
+      );
+    },
   },
   {
     id: "actions",
@@ -69,8 +85,20 @@ export const columns: ColumnDef<ThucDonResponse>[] = [
             >
               Sao chép ID
             </DropdownMenuItem>
-            <DropdownMenuItem>Sửa món</DropdownMenuItem>
-            <DropdownMenuItem className="text-red-600">Xóa món</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onEdit(mon)}>
+              Sửa món
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => onManageRecipe(mon)}>
+              Quản lý công thức
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem
+              className="text-red-600"
+              onClick={() => onDelete(mon)}
+            >
+              Xóa món
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       );
