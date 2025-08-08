@@ -12,6 +12,8 @@ declare module "next-auth" {
         user: {
             // Thêm role vào user trong session
             role?: string;
+            // Thêm id vào user trong session
+            id?: number;
         } & DefaultSession["user"]; // Giữ lại các thuộc tính mặc định (name, email, image)
     }
 }
@@ -23,5 +25,6 @@ declare module "next-auth/jwt" {
         // Thêm các thuộc tính tùy chỉnh vào token
         role?: string;
         accessToken?: string;
+        id?: number; // Thêm id vào token
     }
 }

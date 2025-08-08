@@ -10,6 +10,7 @@ type LoginResponse = {
     token: string;
     email: string;
     chucVu: string;
+    nhanVienId: number; // ID của nhân viên
 };
 
 // authOptions bây giờ nằm ở đây, và không có "export" cũng được nếu chỉ dùng trong file này
@@ -34,7 +35,7 @@ export const authOptions: AuthOptions = {
 
                     if (data && data.token) {
                         return {
-                            id: data.email,
+                            id: data.nhanVienId.toString(), // Chuyển đổi ID sang chuỗi nếu cần
                             email: data.email,
                             role: data.chucVu,
                             accessToken: data.token,
@@ -53,6 +54,7 @@ export const authOptions: AuthOptions = {
             if (user) {
                 token.accessToken = user.accessToken;
                 token.role = user.role;
+                token.id = user.id; // Lưu id người dùng nếu cần
             }
             return token;
         },
@@ -60,6 +62,7 @@ export const authOptions: AuthOptions = {
             if (token) {
                 session.user.role = token.role;
                 session.accessToken = token.accessToken;
+                session.user.id = token.id; // Lưu id người dùng vào session
             }
             return session;
         },

@@ -5,14 +5,23 @@ import {
     Users,
     Warehouse, // Giữ lại icon này cho Kho
     BookOpenCheck, // Icon mới cho Thực đơn
+    LayoutGrid,
+    Armchair,
     Truck,
     TicketPercent,
     BookUser,
     Clock,
     ClipboardCheck,
+    ClipboardPlus,
+    MonitorPlay
 } from 'lucide-react';
 
 export const navLinks = [
+    {
+        href: "/pos",
+        label: "Giao diện Bán hàng",
+        icon: MonitorPlay,
+    },
     {
         href: "/dashboard",
         label: "Tổng quan",
@@ -29,9 +38,25 @@ export const navLinks = [
         icon: BookOpenCheck,
     },
     {
+        href: "/categories",
+        label: "Quản lý Danh mục",
+        icon: LayoutGrid,
+    },
+    {
         href: "/inventory",
         label: "Quản lý Kho",
         icon: Warehouse,
+    },
+
+    {
+        href: "/receipts",
+        label: "Phiếu Nhập Kho",
+        icon: ClipboardPlus,
+    },
+    {
+        href: "/tables",
+        label: "Quản lý Bàn",
+        icon: Armchair,
     },
     {
         href: "/employees",

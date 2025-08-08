@@ -40,8 +40,8 @@ export const getColumns = ({
     header: "Tên món",
   },
   {
-    accessorKey: "loaiMon",
-    header: "Loại món",
+    accessorFn: (row) => row.danhMuc.tenDanhMuc,
+    header: "Danh mục",
   },
   {
     accessorKey: "gia",

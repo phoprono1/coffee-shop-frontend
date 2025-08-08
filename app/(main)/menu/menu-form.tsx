@@ -4,7 +4,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
@@ -28,7 +28,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ThucDonRequest, ThucDonResponse } from "@/types/api";
+import { DanhMucResponse, ThucDonRequest, ThucDonResponse } from "@/types/api";
 import {
   Select,
   SelectContent,
@@ -48,7 +48,7 @@ const formInputSchema = z.object({
   tenMon: z.string().min(1, "Tên món không được để trống"),
   moTa: z.string().optional(),
   gia: z.string().min(1, "Giá không được để trống"),
-  loaiMon: z.string().min(1, "Vui lòng chọn loại món"),
+  danhMucId: z.string().min(1, "Vui lòng chọn danh mục"), // <-- THAY ĐỔI
   urlHinhAnh: z.string().min(1, "Vui lòng tải lên một hình ảnh"),
   khaDung: z.string().min(1, "Vui lòng chọn trạng thái"),
 });
@@ -58,6 +58,7 @@ const formInputSchema = z.object({
 const apiSchema = formInputSchema.transform((data) => ({
   ...data,
   gia: Number(data.gia),
+  danhMucId: Number(data.danhMucId), // <-- THAY ĐỔI
   khaDung: data.khaDung === "true",
 }));
 
@@ -84,6 +85,16 @@ export const MenuForm = ({ isOpen, onClose, initialData }: MenuFormProps) => {
     : "Món ăn đã được tạo.";
   const action = initialData ? "Lưu thay đổi" : "Tạo mới";
 
+  const { data: categories } = useQuery<DanhMucResponse[]>({
+    queryKey: ["categories"],
+    queryFn: async () =>
+      (
+        await apiClient.get("/danh-muc", {
+          headers: { Authorization: `Bearer ${session?.accessToken}` },
+        })
+      ).data,
+    enabled: !!session,
+  });
   // useForm bây giờ làm việc với kiểu dữ liệu "thô"
   const form = useForm<FormValues>({
     resolver: zodResolver(formInputSchema),
@@ -91,13 +102,14 @@ export const MenuForm = ({ isOpen, onClose, initialData }: MenuFormProps) => {
       ? {
           ...initialData,
           gia: String(initialData.gia),
+          danhMucId: String(initialData.danhMuc.id),
           khaDung: String(initialData.khaDung),
         }
       : {
           tenMon: "",
           moTa: "",
           gia: "0",
-          loaiMon: "DO_UONG",
+          danhMucId: "",
           urlHinhAnh: "",
           khaDung: "true",
         },
@@ -209,22 +221,25 @@ export const MenuForm = ({ isOpen, onClose, initialData }: MenuFormProps) => {
             />
             <FormField
               control={form.control}
-              name="loaiMon"
+              name="danhMucId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Loại món</FormLabel>
+                  <FormLabel>Danh mục</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Chọn loại món" />
+                        <SelectValue placeholder="Chọn danh mục..." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      <SelectItem value="DO_UONG">Đồ uống</SelectItem>
-                      <SelectItem value="DO_AN">Đồ ăn</SelectItem>
+                      {categories?.map((cat) => (
+                        <SelectItem key={cat.id} value={String(cat.id)}>
+                          {cat.tenDanhMuc}
+                        </SelectItem>
+                      ))}
                     </SelectContent>
                   </Select>
                   <FormMessage />
