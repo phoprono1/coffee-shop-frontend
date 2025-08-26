@@ -5,6 +5,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -20,6 +21,9 @@ import {
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { TrangThaiDonHangLabels } from "@/constants/enums";
+import ReactDOMServer from "react-dom/server";
+import { ReceiptTemplate } from "@/components/receipt/receipt-template";
+import { Button } from "@/components/ui/button";
 
 interface OrderDetailModalProps {
   isOpen: boolean;
@@ -38,6 +42,34 @@ export const OrderDetailModal = ({
   order,
 }: OrderDetailModalProps) => {
   if (!order) return null;
+
+  const handlePrint = () => {
+    const printWindow = window.open("", "", "height=600,width=800");
+    if (printWindow) {
+      // Chuyển component React thành chuỗi HTML
+      const receiptHtml = ReactDOMServer.renderToString(
+        <ReceiptTemplate order={order} />
+      );
+
+      printWindow.document.write("<html><head><title>Hóa đơn</title>");
+      // Thêm CSS để in đẹp hơn
+      printWindow.document.write(
+        "<style>@media print { body { -webkit-print-color-adjust: exact; } @page { size: 80mm auto; margin: 0; } }</style>"
+      );
+      printWindow.document.write("</head><body>");
+      printWindow.document.write(receiptHtml);
+      printWindow.document.write("</body></html>");
+
+      printWindow.document.close();
+      printWindow.focus(); // Cần thiết cho một số trình duyệt
+
+      // Chờ cho nội dung load xong rồi mới in
+      printWindow.onload = function () {
+        printWindow.print();
+        printWindow.close();
+      };
+    }
+  };
 
   const trangThaiDonHangLabel =
     TrangThaiDonHangLabels[order.trangThaiDonHang] || "Không xác định";
@@ -105,6 +137,9 @@ export const OrderDetailModal = ({
             Tổng thanh toán: {formatCurrency(order.tongTienThanhToan)}
           </div>
         </div>
+        <DialogFooter>
+          <Button onClick={handlePrint}>In Hóa đơn</Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

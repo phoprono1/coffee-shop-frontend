@@ -37,19 +37,47 @@ export const getColumns = ({
 }: MenuColumnsProps): ColumnDef<ThucDonResponse>[] => [
   {
     accessorKey: "tenMon",
-    header: "Tên món",
+    header: () => (
+      <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
+        🍽️ Tên món
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="font-medium text-gray-900 dark:text-gray-100">
+        {row.getValue("tenMon")}
+      </div>
+    ),
   },
   {
+    id: "danhMuc",
     accessorFn: (row) => row.danhMuc.tenDanhMuc,
-    header: "Danh mục",
+    header: () => (
+      <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
+        📂 Danh mục
+      </div>
+    ),
+    cell: ({ row }) => (
+      <Badge
+        variant="secondary"
+        className="bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300 border-orange-200 dark:border-orange-800"
+      >
+        {row.original.danhMuc.tenDanhMuc}
+      </Badge>
+    ),
   },
   {
     accessorKey: "gia",
-    header: () => <div className="text-right">Giá</div>,
+    header: () => (
+      <div className="text-right font-medium text-gray-900 dark:text-gray-100">
+        💰 Giá
+      </div>
+    ),
     cell: ({ row }) => {
       const gia = parseFloat(row.getValue("gia"));
       return (
-        <div className="text-right font-medium">{formatCurrency(gia)}</div>
+        <div className="text-right font-bold text-amber-600 dark:text-amber-400">
+          {formatCurrency(gia)}
+        </div>
       );
     },
   },

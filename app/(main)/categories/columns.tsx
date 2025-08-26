@@ -24,38 +24,78 @@ export const getColumns = ({
 }: CategoriesColumnsProps): ColumnDef<DanhMucResponse>[] => [
   {
     accessorKey: "id",
-    header: "ID",
+    header: () => (
+      <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
+        🏷️ ID
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="font-mono text-sm text-gray-600 dark:text-gray-400">
+        #{row.getValue("id")}
+      </div>
+    ),
   },
   {
     accessorKey: "tenDanhMuc",
-    header: "Tên Danh Mục",
+    header: () => (
+      <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
+        📂 Tên Danh Mục
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="font-semibold text-green-700 dark:text-green-400">
+        {row.getValue("tenDanhMuc")}
+      </div>
+    ),
   },
   {
     accessorKey: "moTa",
-    header: "Mô tả",
+    header: () => (
+      <div className="flex items-center gap-2 font-medium text-gray-900 dark:text-gray-100">
+        📝 Mô tả
+      </div>
+    ),
+    cell: ({ row }) => (
+      <div className="text-gray-600 dark:text-gray-400 max-w-xs truncate">
+        {row.getValue("moTa") || "Không có mô tả"}
+      </div>
+    ),
   },
   {
     id: "actions",
+    header: () => (
+      <div className="text-center font-medium text-gray-900 dark:text-gray-100">
+        ⚙️ Thao tác
+      </div>
+    ),
     cell: ({ row }) => {
       const category = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0 hover:bg-green-100 dark:hover:bg-green-900/20"
+            >
               <span className="sr-only">Mở menu</span>
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Hành động</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onEdit(category)}>
-              Sửa
+          <DropdownMenuContent align="end" className="w-40">
+            <DropdownMenuLabel className="font-medium">
+              🛠️ Hành động
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              onClick={() => onEdit(category)}
+              className="gap-2"
+            >
+              ✏️ Sửa
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="text-red-600"
+              className="text-red-600 dark:text-red-400 gap-2"
               onClick={() => onDelete(category)}
             >
-              Xóa
+              🗑️ Xóa
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

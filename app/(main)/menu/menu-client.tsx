@@ -103,22 +103,97 @@ export const MenuClient = ({ data }: MenuClientProps) => {
         menuItem={selectedMenuItem}
       />
 
-      <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold tracking-tight">
-            Quản lý Thực đơn ({data.length})
-          </h1>
+      <div className="p-6 space-y-6">
+        {/* Header with Stats */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-gradient-to-r from-amber-500 to-orange-500 rounded-xl">
+              <Plus className="h-6 w-6 text-white" />
+            </div>
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Danh sách thực đơn
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {data.length} món ăn trong hệ thống
+              </p>
+            </div>
+          </div>
           <Button
             onClick={() => {
               setEditingData(null);
               setIsFormOpen(true);
             }}
+            className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg hover:shadow-xl transition-all"
           >
             <Plus className="mr-2 h-4 w-4" />
-            Thêm mới
+            Thêm món mới
           </Button>
         </div>
-        <DataTable columns={columns} data={data} />
+
+        {/* Quick Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gradient-to-r from-green-50 to-emerald-100 dark:from-green-900/20 dark:to-emerald-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-green-700 dark:text-green-300 font-medium">
+                  Món đang bán
+                </p>
+                <p className="text-xl font-bold text-green-900 dark:text-green-100">
+                  {data.length}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-green-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm">✓</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-amber-50 to-orange-100 dark:from-amber-900/20 dark:to-orange-900/20 p-4 rounded-lg border border-amber-200 dark:border-amber-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-amber-700 dark:text-amber-300 font-medium">
+                  Giá trung bình
+                </p>
+                <p className="text-xl font-bold text-amber-900 dark:text-amber-100">
+                  {data.length > 0
+                    ? new Intl.NumberFormat("vi-VN", {
+                        style: "currency",
+                        currency: "VND",
+                      }).format(
+                        data.reduce((sum, item) => sum + item.gia, 0) /
+                          data.length
+                      )
+                    : "0 ₫"}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-amber-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm">₫</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-100 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-blue-700 dark:text-blue-300 font-medium">
+                  Danh mục
+                </p>
+                <p className="text-xl font-bold text-blue-900 dark:text-blue-100">
+                  {new Set(data.map((item) => item.danhMuc?.tenDanhMuc)).size}
+                </p>
+              </div>
+              <div className="h-10 w-10 bg-blue-500 rounded-lg flex items-center justify-center">
+                <span className="text-white text-sm">#</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Data Table */}
+        <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700">
+          <DataTable columns={columns} data={data} />
+        </div>
       </div>
     </>
   );

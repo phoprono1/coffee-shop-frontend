@@ -13,6 +13,7 @@ import {
   BanResponse,
   DonHangRequest,
   DonHangResponse,
+  KhuyenMaiResponse,
   ThanhToanRequest,
   VnpayPaymentRequest, // Import type mới
   VnpayPaymentResponse, // Import type mới
@@ -36,22 +37,29 @@ const formatCurrency = (amount: number) =>
 interface PaymentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  total: number;
-  items: CartItem[];
-  table: BanResponse | null;
 }
 
-export const PaymentModal = ({
-  isOpen,
-  onClose,
-  total,
-  items,
-  table,
-}: PaymentModalProps) => {
+export const PaymentModal = ({ isOpen, onClose }: PaymentModalProps) => {
   const { data: session } = useSession();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const clearCart = useCartStore((state) => state.clearCart);
+
+  // LẤY DỮ LIỆU TRỰC TIẾP TỪ STORE
+  const { items, table, promotion, clearCart } = useCartStore();
+
+  // TÍNH TOÁN TỔNG TIỀN BÊN TRONG MODAL
+  const subTotal = items.reduce(
+    (acc, item) => acc + item.gia * item.quantity,
+    0
+  );
+  let total = subTotal;
+  if (promotion && subTotal >= promotion.giaTriToiThieuApDung) {
+    if (promotion.phanTramGiamGia > 0) {
+      total = subTotal * (1 - promotion.phanTramGiamGia / 100);
+    } else if (promotion.giaTriGiamGiaCoDinh > 0) {
+      total = subTotal - promotion.giaTriGiamGiaCoDinh;
+    }
+  }
 
   // MUTATION 3: Khởi tạo thanh toán VNPAY
   const initVnpayMutation = useMutation<
@@ -154,8 +162,12 @@ export const PaymentModal = ({
       chiTietDonHangs: items.map((item) => ({
         thucDonId: item.id,
         soLuong: item.quantity,
-        ghiChuTuyChinh: "",
+        ghiChuTuyChinh: item.note || "",
       })),
+      khuyenMaiId:
+        promotion && subTotal >= promotion.giaTriToiThieuApDung
+          ? promotion.id
+          : undefined, // Lấy promotion trực tiếp từ store
     };
     createOrderMutation.mutate({ orderPayload, paymentMethod });
   };

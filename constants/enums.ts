@@ -49,3 +49,15 @@ export const PhuongThucThanhToanLabels: Record<PhuongThucThanhToan, string> = {
     [PhuongThucThanhToan.THE_NGAN_HANG]: "Thẻ ngân hàng",
     [PhuongThucThanhToan.CHUYEN_KHOAN]: "Chuyển khoản",
 };
+
+export enum TrangThaiLichLamViec {
+    DANG_KY = "DANG_KY",
+    DUYET = "DUYET",
+    TU_CHOI = "TU_CHOI",
+}
+
+export const TrangThaiLichLamViecLabels: Record<TrangThaiLichLamViec, string> = {
+    [TrangThaiLichLamViec.DANG_KY]: "Đang ký",
+    [TrangThaiLichLamViec.DUYET]: "Đã duyệt",
+    [TrangThaiLichLamViec.TU_CHOI]: "Đã từ chối",
+};

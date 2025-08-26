@@ -51,21 +51,37 @@ const PosPage = () => {
     : menuItems;
 
   return (
-    <div className="grid grid-cols-12 gap-4 h-full p-4">
-      <div className="col-span-8 flex flex-col gap-4 h-full">
-        <h1 className="text-2xl font-bold">Tạo Đơn Hàng Mới</h1>
-        <CategoryTabs
-          categories={categories}
-          isLoading={isLoadingCategories}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={setSelectedCategoryId} // Truyền hàm để thay đổi state
-        />
-        <MenuGrid
-          menuItems={filteredMenuItems} // Truyền danh sách đã lọc
-          isLoading={isLoadingMenu}
-        />
+    <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Left Panel - Menu Section */}
+      <div className="flex-1 flex flex-col min-h-0">
+        {/* Header */}
+        <div className="bg-white dark:bg-gray-800 shadow-sm border-b p-4 flex-shrink-0">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            ☕ Giao diện bán hàng
+          </h1>
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Chọn sản phẩm để thêm vào đơn hàng
+          </p>
+        </div>
+
+        {/* Category Tabs */}
+        <div className="bg-white dark:bg-gray-800 px-4 py-3 border-b flex-shrink-0">
+          <CategoryTabs
+            categories={categories}
+            isLoading={isLoadingCategories}
+            selectedCategoryId={selectedCategoryId}
+            onSelectCategory={setSelectedCategoryId}
+          />
+        </div>
+
+        {/* Menu Grid - Scrollable */}
+        <div className="flex-1 min-h-0 bg-gray-50 dark:bg-gray-900 p-4">
+          <MenuGrid menuItems={filteredMenuItems} isLoading={isLoadingMenu} />
+        </div>
       </div>
-      <div className="col-span-4 bg-white rounded-lg shadow-md">
+
+      {/* Right Panel - Order Summary */}
+      <div className="w-96 bg-white dark:bg-gray-800 shadow-xl border-l flex-shrink-0">
         <OrderSummary />
       </div>
     </div>

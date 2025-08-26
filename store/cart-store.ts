@@ -1,28 +1,32 @@
 // file: store/cart-store.ts
 import { create } from 'zustand';
-import { ThucDonResponse, BanResponse } from '@/types/api';
+import { ThucDonResponse, BanResponse, KhuyenMaiResponse } from '@/types/api';
 
 // Định nghĩa một item trong giỏ hàng
 export interface CartItem extends ThucDonResponse {
     quantity: number;
+    note?: string; // Ghi chú tùy chỉnh cho sản phẩm
 }
 
 // Định nghĩa trạng thái của store
 type CartState = {
     items: CartItem[];
     table: BanResponse | null;
+    promotion: KhuyenMaiResponse | null; // <-- STATE MỚI
     addItem: (product: ThucDonResponse) => void;
     removeItem: (productId: number) => void;
     increaseQuantity: (productId: number) => void;
     decreaseQuantity: (productId: number) => void;
+    updateItemNote: (productId: number, note: string) => void; // <-- ACTION MỚI
     setTable: (table: BanResponse | null) => void;
+    setPromotion: (promotion: KhuyenMaiResponse | null) => void; // <-- ACTION MỚI
     clearCart: () => void;
 };
 
 export const useCartStore = create<CartState>((set, get) => ({
     items: [],
     table: null,
-
+    promotion: null, // <-- Giá trị mặc định
     addItem: (product) => {
         const { items } = get();
         const existingItem = items.find((item) => item.id === product.id);
@@ -74,7 +78,17 @@ export const useCartStore = create<CartState>((set, get) => ({
         }
     },
 
-    setTable: (table) => set({ table }),
+    // THÊM ACTION MỚI VÀO ĐÂY
+    updateItemNote: (productId, note) => {
+        set({
+            items: get().items.map((item) =>
+                item.id === productId ? { ...item, note } : item
+            ),
+        });
+    },
 
-    clearCart: () => set({ items: [], table: null }),
+    setTable: (table) => set({ table }),
+    setPromotion: (promotion) => set({ promotion }),
+
+    clearCart: () => set({ items: [], table: null, promotion: null }),
 }));

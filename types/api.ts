@@ -218,3 +218,97 @@ export interface VnpayPaymentResponse {
     message: string;
     code: string;
 }
+
+export interface CaLamViecResponse {
+    id: number;
+    tenCa: string;
+    gioBatDau: string; // "HH:mm:ss"
+    gioKetThuc: string; // "HH:mm:ss"
+}
+
+export interface CaLamViecRequest {
+    tenCa: string;
+    gioBatDau: string; // "HH:mm:ss"
+    gioKetThuc: string; // "HH:mm:ss"
+}
+
+export interface LichLamViecResponse {
+    id: number;
+    nhanVien: NhanVienResponse;
+    caLamViec: CaLamViecResponse;
+    ngay: string; // "YYYY-MM-DD"
+    trangThai: string; // "CHO_DUYET", "DA_DUYET", "TU_CHOI"
+    ghiChu: string;
+}
+
+export interface LichLamViecRequest {
+    nhanVienId: number;
+    caLamViecId: number;
+    ngay: string; // "YYYY-MM-DD"
+    ghiChu?: string;
+    trangThai: string;
+    // `trangThai` và `ghiChu` có thể không cần thiết khi tạo mới từ phía quản lý
+}
+
+export interface CheckInRequest {
+    nhanVienId: number;
+}
+
+export interface ChamCongResponse {
+    id: number;
+    nhanVien: NhanVienResponse;
+    lichLamViec: LichLamViecResponse;
+    thoiGianVao: string | null; // "YYYY-MM-DDTHH:mm:ss"
+    thoiGianRa: string | null;  // "YYYY-MM-DDTHH:mm:ss"
+    trangThaiChamCong: string; // "TRE", "DUNG_GIO", "SOM", "VANG_LAM"
+}
+
+export interface DailySalesReport {
+    ngay: string; // "YYYY-MM-DD"
+    tongDoanhThu: number;
+    soLuongDonHang: number;
+    tongGiamGia: number;
+}
+
+export interface ProfitSummaryReport {
+    ngay: string; // "YYYY-MM-DD"
+    tongDoanhThu: number;
+    tongChiPhiNguyenVatLieu: number;
+    tongLoiNhuanGop: number;
+}
+
+export interface LowStockWarning {
+    nguyenVatLieuId: number;
+    tenNguyenVatLieu: string;
+    donViTinh: string;
+    soLuongTonHienTai: number;
+    mucCanhBaoTonKho: number;
+}
+
+export interface TopSellingItem {
+    thucDonId: number;
+    tenMon: string;
+    tongSoLuongBan: number;
+    tongDoanhThuTuMon: number;
+}
+
+export interface CategorySalesReport {
+    danhMucId: number;
+    tenDanhMuc: string;
+    tongDoanhThu: number;
+    tongSoLuongMonBan: number;
+}
+
+export interface PaymentMethodSales {
+    phuongThuc: string;
+    tongSoTien: number;
+    soLuongGiaoDich: number;
+}
+
+export interface StaffSalesReport {
+    nhanVienId: number;
+    tenNhanVien: string;
+    chucVu: string;
+    tongDoanhThuTaoDon: number;
+    soLuongDonHangTao: number;
+}
